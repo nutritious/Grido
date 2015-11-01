@@ -38,7 +38,7 @@
         android:layout_below="@+id/searchButton"
         android:layout_alignLeft="@+id/searchEditText"
         android:layout_alignStart="@+id/searchEditText"
-        android:numColumns="auto_fit"
+        android:numColumns="3"
         android:layout_alignRight="@+id/searchButton"
         android:layout_alignEnd="@+id/searchButton" />
 

@@ -5,4 +5,8 @@
     <string name="action_settings">Settings</string>
     <string name="search_button_title">Search</string>
     <string name="search_text_hint">Type something...</string>
+    <string name="image_search_image_description">image search image view</string>
+    <string name="image_search_text_hint">image title here</string>
+    <string name="image_search_image_detail_description">Image View - Full Screen</string>
+    <string name="title_activity_image_detail">ImageDetailActivity</string>
 </resources>

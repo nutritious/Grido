@@ -10,9 +10,9 @@ import java.util.ArrayList;
  * Created by ayegorov on 10/31/15.
  */
 public class ImageRecord {
-    private String url;
-    private String thumbUrl;
-    private String title;
+    public String url;
+    public String thumbUrl;
+    public String title;
 
     public ImageRecord(JSONObject jsonObject) {
         try {

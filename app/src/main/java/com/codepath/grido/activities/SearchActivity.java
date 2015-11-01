@@ -1,16 +1,22 @@
 package com.codepath.grido.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.GridView;
 
 import com.codepath.grido.R;
+import com.codepath.grido.adapters.ImageSearchGridAdapter;
+import com.codepath.grido.models.ImageRecord;
 import com.codepath.grido.network.ImageSearchClient;
 import com.codepath.grido.network.ImageSearchHandler;
+
+import java.util.ArrayList;
 
 public class SearchActivity extends AppCompatActivity {
 
@@ -18,6 +24,8 @@ public class SearchActivity extends AppCompatActivity {
     private GridView imageSearchGridView;
 
     private ImageSearchClient imageSearchClient;
+    private ArrayList<ImageRecord> imageRecords;
+    private ImageSearchGridAdapter imageSearchGridAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,8 +33,22 @@ public class SearchActivity extends AppCompatActivity {
         setContentView(R.layout.activity_search);
 
         imageSearchClient = new ImageSearchClient(this);
-        
+        imageRecords = new ArrayList<ImageRecord>();
+
         setupViews();
+
+        imageSearchGridAdapter = new ImageSearchGridAdapter(this, imageRecords);
+        imageSearchGridView.setAdapter(imageSearchGridAdapter);
+
+        imageSearchGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(SearchActivity.this, ImageDetailActivity.class);
+                ImageRecord imageRecord = imageRecords.get(position);
+                intent.putExtra("imageUrl", imageRecord.url);
+                startActivity(intent);
+            }
+        });
     }
 
     private void setupViews() {
@@ -60,12 +82,16 @@ public class SearchActivity extends AppCompatActivity {
         String searchQuery = searchEditText.getText().toString();
         imageSearchClient.getImageRecords(searchQuery, new ImageSearchHandler() {
 
-//            public void onSuccess(ArrayList<ImageRecord> images) {
-//                Log.d("Result", images.toString());
-//            }
-//
-//            public void onFailure(int statusCode, String errorMessage) {
-//            }
+            public void onSuccess(ArrayList<ImageRecord> records) {
+                imageRecords.clear();
+                imageRecords.addAll(records);
+                imageSearchGridAdapter.notifyDataSetChanged();
+
+            }
+
+            public void onFailure(int statusCode, String errorMessage) {
+                imageRecords.clear();
+            }
         });
 //        final Toast toast = Toast.makeText(this, searchQuery, Toast.LENGTH_SHORT);
 //        toast.show();

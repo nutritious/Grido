@@ -11,8 +11,8 @@ import java.util.ArrayList;
  */
 public class ImageSearchHandler {
 
-    public void onSuccess(ArrayList<ImageRecord> images) {
-        Log.w("DEBUG", "got the images " + images.toString());
+    public void onSuccess(ArrayList<ImageRecord> imageRecords) {
+        Log.w("DEBUG", "got the images " + imageRecords.toString());
     }
 
     public void onFailure(int statusCode, String errorMessage) {
