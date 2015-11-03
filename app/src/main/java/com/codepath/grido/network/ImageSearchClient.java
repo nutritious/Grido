@@ -103,6 +103,7 @@ public class ImageSearchClient {
                         handler.onSuccess(imageRecords);
                     } catch (JSONException e) {
                         e.printStackTrace();
+                        handler.onFailure(statusCode, "No Images");
                     }
                 }
 
