@@ -9,16 +9,20 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import com.codepath.grido.R;
 import com.codepath.grido.adapters.ImageSearchGridAdapter;
 import com.codepath.grido.models.ImageRecord;
+import com.codepath.grido.models.ImageSearchParameters;
 import com.codepath.grido.network.ImageSearchClient;
 import com.codepath.grido.network.ImageSearchHandler;
 
 import java.util.ArrayList;
 
 public class SearchActivity extends AppCompatActivity {
+
+    private static final int REQUEST_CODE = 66;
 
     private EditText searchEditText;
     private GridView imageSearchGridView;
@@ -27,6 +31,8 @@ public class SearchActivity extends AppCompatActivity {
     private ArrayList<ImageRecord> imageRecords;
     private ImageSearchGridAdapter imageSearchGridAdapter;
 
+    private ImageSearchParameters filter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,6 +40,8 @@ public class SearchActivity extends AppCompatActivity {
 
         imageSearchClient = new ImageSearchClient(this);
         imageRecords = new ArrayList<ImageRecord>();
+
+        filter = new ImageSearchParameters();
 
         setupViews();
 
@@ -71,16 +79,30 @@ public class SearchActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
+//        if (id == R.id.action_settings) {
+//            return true;
+//        }
 
         return super.onOptionsItemSelected(item);
     }
 
+    public void onSettings(MenuItem item) {
+        Intent intent = new Intent(this, SearchSettingsActivity.class);
+
+        intent.putExtra("filter", filter);
+
+        startActivityForResult(intent, REQUEST_CODE);
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_CODE && resultCode == RESULT_OK) {
+            filter = (ImageSearchParameters) data.getSerializableExtra("filter");
+        }
+    }
+
     public void onImageSearchClick(View v) {
         String searchQuery = searchEditText.getText().toString();
-        imageSearchClient.getImageRecords(searchQuery, new ImageSearchHandler() {
+        imageSearchClient.getImageRecords(searchQuery, filter, new ImageSearchHandler() {
 
             public void onSuccess(ArrayList<ImageRecord> records) {
                 imageRecords.clear();
@@ -91,9 +113,9 @@ public class SearchActivity extends AppCompatActivity {
 
             public void onFailure(int statusCode, String errorMessage) {
                 imageRecords.clear();
+                imageSearchGridAdapter.notifyDataSetChanged();
+                Toast.makeText(SearchActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
             }
         });
-//        final Toast toast = Toast.makeText(this, searchQuery, Toast.LENGTH_SHORT);
-//        toast.show();
     }
 }
