@@ -12,6 +12,7 @@ import android.widget.GridView;
 import android.widget.Toast;
 
 import com.codepath.grido.R;
+import com.codepath.grido.adapters.EndlessScrollListener;
 import com.codepath.grido.adapters.ImageSearchGridAdapter;
 import com.codepath.grido.models.ImageRecord;
 import com.codepath.grido.models.ImageSearchParameters;
@@ -55,6 +56,27 @@ public class SearchActivity extends AppCompatActivity {
                 ImageRecord imageRecord = imageRecords.get(position);
                 intent.putExtra("imageUrl", imageRecord.url);
                 startActivity(intent);
+            }
+        });
+
+        imageSearchGridView.setOnScrollListener(new EndlessScrollListener() {
+            @Override
+            public boolean onLoadMore(int page, int totalItemsCount) {
+                String searchQuery = searchEditText.getText().toString();
+                boolean loadingMore = imageSearchClient.getMoreImageRecordsStartingWithIndex(totalItemsCount, searchQuery, filter, new ImageSearchHandler() {
+
+                    public void onSuccess(ArrayList<ImageRecord> records) {
+                        imageRecords.addAll(records);
+                        imageSearchGridAdapter.notifyDataSetChanged();
+
+                    }
+
+                    public void onFailure(int statusCode, String errorMessage) {
+                        Toast.makeText(SearchActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                return loadingMore;
             }
         });
     }
@@ -117,5 +139,9 @@ public class SearchActivity extends AppCompatActivity {
                 Toast.makeText(SearchActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private boolean loadMoreDataIfNeeded() {
+        return true;
     }
 }
