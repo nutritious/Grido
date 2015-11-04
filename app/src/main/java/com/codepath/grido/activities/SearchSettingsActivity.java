@@ -67,8 +67,8 @@ public class SearchSettingsActivity extends AppCompatActivity {
 
     private Spinner createSpinner(@IdRes int resourceId, @ArrayRes int arrayResourceId) {
         Spinner spinner = (Spinner) findViewById(resourceId);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, arrayResourceId, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, arrayResourceId, R.layout.spinner_item);
+        adapter.setDropDownViewResource(R.layout.spinner_dropdown_view);
         spinner.setAdapter(adapter);
         return spinner;
     }
